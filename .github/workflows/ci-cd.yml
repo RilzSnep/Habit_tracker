@@ -25,6 +25,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Run linting with flake8
+        run: |
+          pip install flake8
+          flake8 . --max-line-length=120 --exclude=venv,.git,__pycache__
+
       - name: Apply migrations
         env:
           DJANGO_SETTINGS_MODULE: habit_tracker.settings
@@ -37,8 +42,8 @@ jobs:
           SECRET_KEY: "test-secret-key"
           TELEGRAM_BOT_TOKEN: "test-token"
         run: |
-          python Habit_tracker/manage.py makemigrations
-          python Habit_tracker/manage.py migrate
+          python manage.py makemigrations
+          python manage.py migrate
 
       - name: Run tests
         env:
@@ -54,8 +59,8 @@ jobs:
           CELERY_TASK_ALWAYS_EAGER: "True"
           CELERY_TASK_EAGER_PROPAGATES: "True"
         run: |
-          python Habit_tracker/manage.py test habits.tests
-          python Habit_tracker/manage.py test users.tests
+          python manage.py test habits.tests
+          python manage.py test users.tests
 
   build-and-deploy:
     needs: test-and-lint
