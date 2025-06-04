@@ -2,10 +2,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - develop
+      - master
   pull_request:
     branches:
-      - develop
+      - master
 
 jobs:
   test-and-lint:
@@ -29,7 +29,34 @@ jobs:
           pip install flake8
           flake8 . --max-line-length=120 --exclude=venv,.git,__pycache__
 
+      - name: Apply migrations
+        env:
+          DJANGO_SETTINGS_MODULE: habit_tracker.settings
+          DB_ENGINE: django.db.backends.sqlite3
+          DB_NAME: ":memory:"
+          DB_USER: ""
+          DB_PASSWORD: ""
+          DB_HOST: ""
+          DB_PORT: ""
+          SECRET_KEY: "test-secret-key"
+          TELEGRAM_BOT_TOKEN: "test-token"
+        run: |
+          python Habit_tracker/manage.py makemigrations
+          python Habit_tracker/manage.py migrate
+
       - name: Run tests
+        env:
+          DJANGO_SETTINGS_MODULE: habit_tracker.settings
+          DB_ENGINE: django.db.backends.sqlite3
+          DB_NAME: ":memory:"
+          DB_USER: ""
+          DB_PASSWORD: ""
+          DB_HOST: ""
+          DB_PORT: ""
+          SECRET_KEY: "test-secret-key"
+          TELEGRAM_BOT_TOKEN: "test-token"
+          CELERY_TASK_ALWAYS_EAGER: "True"
+          CELERY_TASK_EAGER_PROPAGATES: "True"
         run: |
           python Habit_tracker/manage.py test habits.tests
           python Habit_tracker/manage.py test users.tests
@@ -37,7 +64,7 @@ jobs:
   build-and-deploy:
     needs: test-and-lint
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
 
     steps:
       - name: Checkout code
@@ -69,7 +96,8 @@ jobs:
           port: 22
           script: |
             cd /home/rilzsnep/habit_tracker
-            git pull origin develop
+            git pull origin master
             docker-compose -f docker-compose.yml down
             docker-compose -f docker-compose.yml pull
-            docker-compose -f docker-compose.yml up -d
+            docker-compose -f docker-compose.yml up -dO
+
