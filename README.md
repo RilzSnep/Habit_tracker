@@ -71,3 +71,4 @@ Workflow-файл .github/workflows/ci-cd.yml настроен для:
 
 После успешного деплоя приложение доступно по адресу: http://<your-server-ip> (замените на IP сервера).
 
+Minor update
