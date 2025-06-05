@@ -9,3 +9,4 @@ urlpatterns = [
     path('api/', include('habits.urls')),  # Эта строка вызывает ошибку
     path('api/users/', include('users.urls')),  # Если у тебя есть приложение users
 ]
+ 

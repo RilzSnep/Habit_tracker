@@ -1,7 +1,7 @@
-# habits/tests.py
 from django.test import TestCase
 from habits.models import Habit
 from users.models import CustomUser
+
 
 class HabitTestCase(TestCase):
     def setUp(self):
@@ -20,3 +20,4 @@ class HabitTestCase(TestCase):
         habit = Habit.objects.get(action="Drink water")
         self.assertEqual(habit.place, "Home")
         self.assertEqual(habit.time.strftime('%H:%M:%S'), "12:00:00")
+ 

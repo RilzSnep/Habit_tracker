@@ -6,6 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 @shared_task
 def send_telegram_reminder(habit_id):
     try:
@@ -34,3 +35,4 @@ def send_telegram_reminder(habit_id):
     except Exception as e:
         logger.error(f"Error sending reminder: {str(e)}")
         return False
+ 
