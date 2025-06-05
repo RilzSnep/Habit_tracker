@@ -4,6 +4,7 @@ from rest_framework import status
 from django.urls import reverse
 from users.models import CustomUser
 
+
 class UserTests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -77,3 +78,4 @@ class UserTests(TestCase):
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
+

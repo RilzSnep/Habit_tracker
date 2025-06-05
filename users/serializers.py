@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from users.models import CustomUser
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -18,3 +19,4 @@ class UserSerializer(serializers.ModelSerializer):
             telegram_id=validated_data.get('telegram_id', '')
         )
         return user
+

@@ -4,6 +4,7 @@ from rest_framework.permissions import AllowAny
 from users.serializers import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+
 class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
@@ -20,6 +21,7 @@ class RegisterView(generics.CreateAPIView):
             },
         }, status=status.HTTP_201_CREATED)
 
+
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -35,3 +37,4 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'refresh': response.data['refresh'],
             'access': response.data['access'],
         }, status=status.HTTP_200_OK)
+
