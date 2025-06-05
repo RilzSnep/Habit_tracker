@@ -6,5 +6,5 @@ class HabitsConfig(AppConfig):
     name = 'habits'
 
     def ready(self):
-        import signals
+        pass
  
