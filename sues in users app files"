@@ -1,0 +1,95 @@
+[1mdiff --git a/requirements.txt b/requirements.txt[m
+[1mindex edfe65e..352fbf3 100644[m
+Binary files a/requirements.txt and b/requirements.txt differ
+[1mdiff --git a/users/admin.py b/users/admin.py[m
+[1mindex 151acd8..3efefa9 100644[m
+[1m--- a/users/admin.py[m
+[1m+++ b/users/admin.py[m
+[36m@@ -2,4 +2,5 @@[m [mfrom django.contrib import admin[m
+ from django.contrib.auth.admin import UserAdmin[m
+ from .models import CustomUser[m
+ [m
+[31m-admin.site.register(CustomUser, UserAdmin)[m
+\ No newline at end of file[m
+[32m+[m[32madmin.site.register(CustomUser, UserAdmin)[m
+[41m+[m
+[1mdiff --git a/users/serializers.py b/users/serializers.py[m
+[1mindex cd0a58c..2ec41d2 100644[m
+[1m--- a/users/serializers.py[m
+[1m+++ b/users/serializers.py[m
+[36m@@ -1,6 +1,7 @@[m
+ from rest_framework import serializers[m
+ from users.models import CustomUser[m
+ [m
+[32m+[m
+ class UserSerializer(serializers.ModelSerializer):[m
+     class Meta:[m
+         model = CustomUser[m
+[36m@@ -17,4 +18,5 @@[m [mclass UserSerializer(serializers.ModelSerializer):[m
+             username=validated_data.get('username', ''),[m
+             telegram_id=validated_data.get('telegram_id', '')[m
+         )[m
+[31m-        return user[m
+\ No newline at end of file[m
+[32m+[m[32m        return user[m
+[41m+[m
+[1mdiff --git a/users/tests.py b/users/tests.py[m
+[1mindex 4bdee87..b8da2ac 100644[m
+[1m--- a/users/tests.py[m
+[1m+++ b/users/tests.py[m
+[36m@@ -4,6 +4,7 @@[m [mfrom rest_framework import status[m
+ from django.urls import reverse[m
+ from users.models import CustomUser[m
+ [m
+[32m+[m
+ class UserTests(TestCase):[m
+     def setUp(self):[m
+         self.client = APIClient()[m
+[36m@@ -76,4 +77,5 @@[m [mclass UserTests(TestCase):[m
+         data = {'refresh': refresh_token}[m
+         response = self.client.post(url, data, format='json')[m
+         self.assertEqual(response.status_code, status.HTTP_200_OK)[m
+[31m-        self.assertIn('access', response.data)[m
+\ No newline at end of file[m
+[32m+[m[32m        self.assertIn('access', response.data)[m
+[41m+[m
+[1mdiff --git a/users/urls.py b/users/urls.py[m
+[1mindex f22bd78..402e5cd 100644[m
+[1m--- a/users/urls.py[m
+[1m+++ b/users/urls.py[m
+[36m@@ -6,4 +6,5 @@[m [murlpatterns = [[m
+     path('users/register/', RegisterView.as_view(), name='register'),[m
+     path('users/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),[m
+     path('users/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),[m
+[31m-][m
+\ No newline at end of file[m
+[32m+[m[32m][m
+[41m+[m
+[1mdiff --git a/users/views.py b/users/views.py[m
+[1mindex 3e79610..b67c583 100644[m
+[1m--- a/users/views.py[m
+[1m+++ b/users/views.py[m
+[36m@@ -4,6 +4,7 @@[m [mfrom rest_framework.permissions import AllowAny[m
+ from users.serializers import UserSerializer[m
+ from rest_framework_simplejwt.views import TokenObtainPairView[m
+ [m
+[32m+[m
+ class RegisterView(generics.CreateAPIView):[m
+     serializer_class = UserSerializer[m
+     permission_classes = [AllowAny][m
+[36m@@ -20,6 +21,7 @@[m [mclass RegisterView(generics.CreateAPIView):[m
+             },[m
+         }, status=status.HTTP_201_CREATED)[m
+ [m
+[32m+[m
+ class CustomTokenObtainPairView(TokenObtainPairView):[m
+     def post(self, request, *args, **kwargs):[m
+         serializer = self.get_serializer(data=request.data)[m
+[36m@@ -34,4 +36,5 @@[m [mclass CustomTokenObtainPairView(TokenObtainPairView):[m
+             },[m
+             'refresh': response.data['refresh'],[m
+             'access': response.data['access'],[m
+[31m-        }, status=status.HTTP_200_OK)[m
+\ No newline at end of file[m
+[32m+[m[32m        }, status=status.HTTP_200_OK)[m
+[41m+[m
