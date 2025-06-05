@@ -88,6 +88,7 @@ jobs:
           echo "SSH Key presence check: ${{ secrets.SERVER_SSH_KEY != '' && 'Key exists' || 'Key is empty' }}"
           echo "Host presence check: ${{ secrets.SERVER_HOST != '' && 'Host exists' || 'Host is empty' }}"
           echo "Username presence check: ${{ secrets.SERVER_USERNAME != '' && 'Username exists' || 'Username is empty' }}"
+          echo "SSH Key sample (first 50 chars): ${{ secrets.SERVER_SSH_KEY != '' && substr(secrets.SERVER_SSH_KEY, 0, 50) || 'No key' }}"
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
