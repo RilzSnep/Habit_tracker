@@ -37,4 +37,3 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'refresh': response.data['refresh'],
             'access': response.data['access'],
         }, status=status.HTTP_200_OK)
-

@@ -19,4 +19,3 @@ class UserSerializer(serializers.ModelSerializer):
             telegram_id=validated_data.get('telegram_id', '')
         )
         return user
-
