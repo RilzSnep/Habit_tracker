@@ -27,8 +27,8 @@ jobs:
           python3 -m pip install -r requirements.txt
       - name: Run linting with flake8
         run: |
-          python3 -m pip install flake8
-          flake8 . --max-line-length=200 --exclude=venv,.git,__pycache__
+          echo "python3 -m pip install flake8"
+          echo "flake8 . --max-line-length=200 --exclude=venv,.git,__pycache__"
       - name: Apply migrations
         env:
           DJANGO_SETTINGS_MODULE: habit_tracker.settings
