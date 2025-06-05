@@ -17,46 +17,18 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
-
       - name: Install Python venv
         run: |
           sudo apt update
           sudo apt install -y python3.12-venv
-
-      - name: Fix requirements.txt encoding (if needed)
-        run: |
-          if ! grep -q "^[a-zA-Z0-9-]" requirements.txt 2>/dev/null; then
-            echo "requirements.txt is corrupted, creating a default one"
-            cat << 'EOL' > requirements.txt
-asgiref==3.7.2
-celery==5.3.0
-Django==4.2
-djangorestframework==3.14.0
-djangorestframework-simplejwt==5.3.0
-drf-yasg==1.21.7
-psycopg2-binary==2.9.9
-python-dotenv==1.0.0
-redis==4.5.4
-requests==2.31.0
-pytest==7.4.0
-pytest-django==4.5.2
-pytest-cov==4.1.0
-setuptools>=68.0.0
-django-cors-headers==4.3.1
-flake8==7.2.0
-EOL
-          fi
-
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install -r requirements.txt
-
       - name: Run linting with flake8
         run: |
           python3 -m pip install flake8
           flake8 . --max-line-length=200 --exclude=venv,.git,__pycache__
-
       - name: Apply migrations
         env:
           DJANGO_SETTINGS_MODULE: habit_tracker.settings
@@ -71,7 +43,6 @@ EOL
         run: |
           python3 manage.py makemigrations
           python3 manage.py migrate
-
       - name: Run tests
         env:
           DJANGO_SETTINGS_MODULE: habit_tracker.settings
@@ -88,7 +59,6 @@ EOL
         run: |
           python3 manage.py test habits.tests
           python3 manage.py test users.tests
-
   build-and-deploy:
     needs: test-and-lint
     runs-on: ubuntu-latest
@@ -122,4 +92,3 @@ EOL
             docker-compose -f docker-compose.yml down
             docker-compose -f docker-compose.yml pull
             docker-compose -f docker-compose.yml up -d
-
