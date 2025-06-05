@@ -7,52 +7,29 @@ on:
   pull_request:
     branches:
       - master
-
 jobs:
   test-and-lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
-      - name: Fix requirements.txt encoding and content
+      - name: Fix requirements.txt encoding
         run: |
-          if ! grep -q "^[a-zA-Z0-9-]" requirements.txt 2>/dev/null; then
-            echo "requirements.txt is corrupted, creating a default one"
-            cat << 'EOL' > requirements.txt
-asgiref==3.7.2
-celery==5.3.0
-Django==4.2
-djangorestframework==3.14.0
-djangorestframework-simplejwt==5.3.0
-drf-yasg==1.21.7
-psycopg2-binary
-python-dotenv==1.0.0
-redis==4.5.4
-requests==2.31.0
-pytest==7.4.0
-pytest-django==4.5.2
-pytest-cov==4.1.0
-setuptools>=68.0.0
-django-cors-headers==4.3.1
-EOL
-          fi
-
+          python3 -c "with open('requirements.txt', 'r', encoding='utf-16le', errors='ignore') as f, open('requirements_utf8.txt', 'w', encoding='utf-8') as f_out: f_out.write(f.read())"
+          mv requirements_utf8.txt requirements.txt
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
       - name: Run linting with flake8
         run: |
           pip install flake8
           flake8 . --max-line-length=200 --exclude=venv,.git,__pycache__
-
       - name: Apply migrations
         env:
           DJANGO_SETTINGS_MODULE: habit_tracker.settings
@@ -79,28 +56,52 @@ EOL
           DB_PORT: ""
           SECRET_KEY: "test-secret-key"
           TELEGRAM_BOT_TOKEN: "test-token"
+        run: |
+          python manage.py makemigrations
+          python manage.py migrate
+      - name: Run tests
+        env:
+          DJANGO_SETTINGS_MODULE: habit_tracker.settings
+          DB_ENGINE: django.db.backends.sqlite3
+          DB_NAME: ":memory:"
+          DB_USER: ""
+          DB_PASSWORD: ""
+          DB_HOST: ""
+          DB_PORT: ""
+          SECRET_KEY: "test-secret-key"
+          TELEGRAM_BOT_TOKEN: "test-token"
+        run: |
+          python manage.py makemigrations
+          python manage.py migrate
+      - name: Run tests
+        env:
+          DJANGO_SETTINGS_MODULE: habit_tracker.settings
+          DB_ENGINE: django.db.backends.sqlite3
+          DB_NAME: ":memory:"
+          DB_USER: ""
+          DB_PASSWORD: ""
+          DB_HOST: ""
+          DB_PORT: ""
+          SECRET_KEY: "test-secret-key"
+          TELEGRAM_BOT_TOKEN: "test-token"
           CELERY_TASK_ALWAYS_EAGER: "True"
           CELERY_TASK_EAGER_PROPAGATES: "True"
         run: |
           python manage.py test habits.tests
           python manage.py test users.tests
-
   build-and-deploy:
     needs: test-and-lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Build and push Docker images
         run: |
           docker-compose -f docker-compose.yml build
@@ -108,7 +109,6 @@ EOL
           docker tag habit_tracker-celery:latest rilzsnep/habit_tracker-celery:latest
           docker push rilzsnep/habit_tracker-web:latest
           docker push rilzsnep/habit_tracker-celery:latest
-
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.10
         with:
