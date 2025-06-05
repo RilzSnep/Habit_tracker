@@ -28,7 +28,7 @@ jobs:
       - name: Run linting with flake8
         run: |
           pip install flake8
-          flake8 . --max-line-length=333 --exclude=venv,.git,__pycache__
+          flake8 . --max-line-length=200 --exclude=venv,.git,__pycache__
 
       - name: Apply migrations
         env:
@@ -65,7 +65,6 @@ jobs:
   build-and-deploy:
     needs: test-and-lint
     runs-on: ubuntu-latest
-    # Убрано условие if: теперь выполняется после test-and-lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
