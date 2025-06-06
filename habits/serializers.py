@@ -1,10 +1,14 @@
 from rest_framework import serializers
 from habits.models import Habit
 
+
 class HabitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Habit
-        fields = ['id', 'user', 'place', 'time', 'action', 'is_pleasant', 'related_habit', 'periodicity', 'reward', 'duration', 'is_public']
+        fields = [
+            'id', 'user', 'place', 'time', 'action', 'is_pleasant',
+            'related_habit', 'periodicity', 'reward', 'duration', 'is_public'
+        ]
         read_only_fields = ['user']
 
     def validate(self, data):
@@ -33,3 +37,4 @@ class HabitSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Периодичность должна быть от 1 до 7 дней.")
 
         return data
+ 

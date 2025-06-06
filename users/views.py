@@ -4,6 +4,7 @@ from rest_framework.permissions import AllowAny
 from users.serializers import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+
 class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
@@ -19,6 +20,7 @@ class RegisterView(generics.CreateAPIView):
                 'email': user.email,
             },
         }, status=status.HTTP_201_CREATED)
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):

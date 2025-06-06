@@ -1,74 +1,75 @@
 Habit Tracker
-Описание
-Приложение для отслеживания привычек с использованием Django, PostgreSQL, Redis, Celery и Nginx.
-Локальный запуск
+Обзор
+Habit Tracker — это веб-приложение на базе Django, предназначенное для отслеживания ежедневных привычек пользователей. Оно включает функции аутентификации пользователей, создания привычек и напоминаний через Telegram-бота. Проект использует Docker для деплоя и Celery для обработки фоновых задач.
+Возможности
 
-Убедитесь, что установлены Docker и Docker Compose.
+Регистрация и аутентификация пользователей (через Django REST Framework и JWT).
+Создание, обновление и удаление привычек.
+Отслеживание выполнения привычек через простой интерфейс.
+Получение напоминаний через Telegram-бота.
+Документация API с использованием drf-yasg (Swagger).
+Автоматизированный CI/CD пайплайн с GitHub Actions.
 
-Клонируйте репозиторий:
-git clone https://github.com/RilzSnep/Habit_tracker
+Технологический стек
+
+Бэкенд: Django, Django REST Framework
+База данных: PostgreSQL
+Очередь задач: Celery, Redis
+Фронтенд: Базовые шаблоны (можно расширить с помощью фреймворка фронтенда)
+Деплой: Docker, Docker Compose, Nginx
+CI/CD: GitHub Actions
+Дополнительные инструменты: drf-yasg (документация API), pytest (тестирование), flake8 (линтинг)
+
+Требования
+
+Python 3.12
+Docker и Docker Compose
+Git
+Токен Telegram-бота (для напоминаний)
+Доступ к серверу для деплоя (например, VM)
+
+Установка
+1. Клонирование репозитория
+git clone https://github.com/RilzSnep/Habit_tracker.git
 cd Habit_tracker
 
-
-Создайте файл .env с переменными окружения (см. пример ниже).
-
-Запустите проект:
-docker-compose up --build
-
-
-Приложение будет доступно по адресу http://localhost.
-
-
-Пример файла .env
+2. Настройка переменных окружения
+Создайте файл .env в корневой директории проекта и добавьте следующее:
+SECRET_KEY=ваш-секретный-ключ
+TELEGRAM_BOT_TOKEN=ваш-токен-telegram-бота
 DB_ENGINE=django.db.backends.postgresql
 DB_NAME=habit_tracker
-DB_USER=postgres
-DB_PASSWORD=123456
+DB_USER=ваш-пользователь-базы
+DB_PASSWORD=ваш-пароль-базы
 DB_HOST=db
 DB_PORT=5432
-SECRET_KEY=your-very-secure-secret-key-1234567890
-TELEGRAM_BOT_TOKEN=6557371718:AAETC6T-PobT4JXYv0OHM8G40l1BhMp1g
 
-Настройка CI/CD и деплоя
-Настройка сервера
+3. Сборка и запуск с Docker
+docker-compose up --build -d
 
-Создайте виртуальную машину в Yandex Cloud с Ubuntu 22.04.
+4. Применение миграций
+docker-compose exec web python manage.py migrate
 
-Установите Docker и Docker Compose:
-sudo apt update
-sudo apt install -y docker.io docker-compose
-sudo systemctl start docker
-sudo systemctl enable docker
-sudo usermod -aG docker $USER
+5. Доступ к приложению
 
+Веб-приложение: http://localhost:8000
+Документация API (Swagger): http://localhost:8000/swagger/
 
-Настройте SSH-доступ:
+Запуск тестов
+docker-compose exec web python manage.py test habits.tests
+docker-compose exec web python manage.py test users.tests
 
-Сгенерируйте SSH-ключ: ssh-keygen -t rsa -b 4096.
-Добавьте публичный ключ в ~/.ssh/authorized_keys на сервере.
+Линтинг
+docker-compose exec web flake8 . --max-line-length=200 --exclude=venv,.git,__pycache__
 
+Деплой
+Проект использует GitHub Actions для CI/CD. Для деплоя на сервер:
 
-Клонируйте репозиторий:
-git clone https://github.com/RilzSnep/Habit_tracker /home/rilzsnep/habit_tracker
-
-
-
-Настройка GitHub Actions
-
-Добавьте секреты в настройки репозитория:
-DOCKER_USERNAME и DOCKER_PASSWORD для Docker Hub.
-SERVER_HOST, SERVER_USERNAME, SERVER_SSH_KEY для SSH-доступа.
+Настройте следующие секреты в вашем репозитории GitHub:
+DOCKER_USERNAME и DOCKER_PASSWORD (для логина в Docker Hub)
+SERVER_HOST, SERVER_USERNAME, SERVER_SSH_KEY (для SSH-доступа к серверу)
 
 
-Workflow-файл .github/workflows/ci-cd.yml настроен для:
-Линтинга и тестирования.
-Сборки и пуша Docker-образов.
-Деплоя на сервер.
+Отправьте изменения в ветку master или feature/homework-ci-cd, чтобы запустить пайплайн.
 
 
-
-Адрес сервера
-
-После успешного деплоя приложение доступно по адресу: http://<your-server-ip> (замените на IP сервера).
-
-Minor update
